@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Day 2: Interact with a door to open it"
-date:   2019-10-24
+date:   2019-10-26
 ---
 
 This seemed like it should be simple. Click on the door, it rotates. Simple, right. But, wrong. After futzing about myself and coming up with the below:
@@ -24,3 +24,7 @@ Turns out the issue wasn't the collision mesh (though the door needed one), it w
 ![Navmesh issue](day2/NavmeshIssue.jpg)
 
 To help that I decreased the tile size in the Navigation Mesh settings. That alone didn't fix it all, I also had to turn on the realtime rebuilding of the nav mesh, also in the Project Settings.
+
+![Navmesh working](day2/WorkingNavMesh.jpg)
+
+In the end it finally works.

@@ -2,7 +2,6 @@
 layout: post
 title:  "Day 1: Play a sound effect with a trigger"
 date:   2019-10-24
-categories: jekyll update
 ---
 
 Installing Unreal Engine. Futzed around trying to find if I already had an Epic account, apparently not. Created one and then launched UE4... and waited ... and waited .. and waited. This thing takes forever to start up on my laptop.
