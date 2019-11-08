@@ -15,9 +15,10 @@
 # in the templates via {{ site.myvariable }}.
 title: 30 Days of Gamed Dev
 description: >- # this means to ignore newlines until "baseurl:"
-  Write an awesome description for your new site here. You can edit this
-  line in _config.yml. It will appear in your document head meta (for
-  Google search results) and in your feed.xml site description.
+    Welcome! Here I am recording my Journey through KindredDev's 
+    "[30 Days of Game Dev]({{site.baseurl}}/assets/image/30Days.png)" challenge. 
+    You can also follow along with my GitHub repo:
+    [https://github.com/ntroutman/30-days-of-game-dev](https://github.com/ntroutman/30-days-of-game-dev)
 baseurl: "/30-days-of-game-dev" # the subpath of your site, e.g. /blog
 github_username:  ntroutman
 
