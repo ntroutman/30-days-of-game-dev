@@ -4,3 +4,5 @@
 
 layout: home
 ---
+
+Welcome! Here I am recording my Journey through KindredDev's "[30 Days of Game Dev]({{site.baseurl}}/assets/image/30Days.png)" challenge. You can also follow along with my GitHub repo: [https://github.com/ntroutman/30-days-of-game-dev](https://github.com/ntroutman/30-days-of-game-dev)
