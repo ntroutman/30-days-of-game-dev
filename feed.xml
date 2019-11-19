@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="/30-days-of-game-dev/feed.xml" rel="self" type="application/atom+xml" /><link href="/30-days-of-game-dev/" rel="alternate" type="text/html" /><updated>2019-11-19T15:48:07-08:00</updated><id>/30-days-of-game-dev/feed.xml</id><title type="html">30 Days of Gamed Dev</title><subtitle>Welcome! Here I am recording my Journey through [KindredDev's](https://www.twitch.tv/kindreddev/)  &quot;[30 Days of Game Dev]({{site.baseurl}}/assets/image/30Days.png)&quot; challenge.  You can also follow along with my GitHub repo: [https://github.com/ntroutman/30-days-of-game-dev](https://github.com/ntroutman/30-days-of-game-dev)</subtitle><entry><title type="html">Day 4: Create a Key Item and Use it to Open a Door</title><link href="/30-days-of-game-dev/2019/11/09/day4.html" rel="alternate" type="text/html" title="Day 4: Create a Key Item and Use it to Open a Door" /><published>2019-11-09T16:00:00-08:00</published><updated>2019-11-09T16:00:00-08:00</updated><id>/30-days-of-game-dev/2019/11/09/day4</id><content type="html" xml:base="/30-days-of-game-dev/2019/11/09/day4.html">&lt;p&gt;After following the guide from Day 3.5 I thought this should be a piece of cake.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Create a new child class of BP_BaseInteractable called “BP_Door”&lt;/li&gt;
+  &lt;li&gt;Add a function “ShouldOpen?” which returns a single boolean defaulting to “True”, this method would allow arbitrary conditions for child classes, such as keys.&lt;/li&gt;
+  &lt;li&gt;Make a new child class of BP_Door called “BP_KeyCard_Door” which has a variable of type “BP_BaseItem” that will be the key card that has to be in the player’s inventory in order for the door to open.&lt;/li&gt;
+  &lt;li&gt;Override “ShouldOpen?” in BP_KeyCard_Door to check the player’s inventory for the needed key card.&lt;/li&gt;
+  &lt;li&gt;Done!&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;This ended up take several hours due to a whole slew of reasons.&lt;/p&gt;
+
+&lt;h3 id=&quot;the-door&quot;&gt;The Door&lt;/h3&gt;
+
+&lt;p&gt;Lets start with the door. I redid the door from Day 2 to make a sliding door instead of a rotating door. The door blueprint also contains a “Should Open?” method which returns true/false if the door determines it can be opened or not. It also has a “Should Close?” that behaves the same for closing.&lt;/p&gt;
+
+&lt;figure&gt;
+![BP_Door Blueprint - Event graph](/30-days-of-game-dev/assets/image/day4/BP_Door.jpg)
+*The event graph for BP_Door, shows calling 'Should Open?' to determine if the door will respond.*
+&lt;/figure&gt;
+
+&lt;p&gt;&lt;img src=&quot;/30-days-of-game-dev/assets/image/day4/BP_Door_ShouldOpen.jpg&quot; alt=&quot;BP_Door Blueprint - Should Open?&quot; /&gt;
+&lt;em&gt;Default implementation of Should Open? for BP_Door, always ‘True’.&lt;/em&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;inventory-checking&quot;&gt;Inventory Checking&lt;/h3&gt;
+
+&lt;p&gt;Initially I had written the key card door’s “Should Open” method by simply casting the instigator of the interaction to MyCharacter, grabbing the Inventory array and checking if if contained the ItemInfo of the referenced Key actor. Apparently, checking if a struct is in an array of structs is kind of broken. I couldn’t get it to work. After a lot of futzing around I ended up decided to re-architect my code a bit. This included two things, adding an “ItemId” to ItemInfo and adding a new “Inventory” blueprint component.&lt;/p&gt;
+
+&lt;h3 id=&quot;a-new-inventory-component&quot;&gt;A New Inventory Component&lt;/h3&gt;
+
+&lt;p&gt;Instead of burying the inventory as a variable inside of the character class and filling that class up with inventory specific methods, I decided to create a new Actor Component called “BPC_Inventory” which would hold the whole inventory subsystem for tracking what is in an inventory, checking the contents, stacking, checking if there is room, etc. This meant that when the “Pickup” event was called on the character it simply called “Add Item” on the attached inventory component.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/30-days-of-game-dev/assets/image/day4/BP_BaseItem_Interact.png&quot; alt=&quot;Blueprint: BP_BaseItem: Interact&quot; /&gt;
+&lt;em&gt;Interacting with a BaseItem calls ‘Pickup’ on the character.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/30-days-of-game-dev/assets/image/day4/MyCharacter_Pickup.png&quot; alt=&quot;Blueprint: MyCharacter: Pickup&quot; /&gt;
+&lt;em&gt;“Add Item” is called on the Inventory when the player picks up an item. Note, the item is only destroyed if it was successfully picked up and added to the inventory.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/30-days-of-game-dev/assets/image/day4/BPC_Inventory_AddItem.png&quot; alt=&quot;Blueprint: BPC_Inventory: Add Item&quot; /&gt;
+&lt;em&gt;The inventory attempts to add the requested item to the inventory if there is room, it returns a success/fail depending on if it was successfully added.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;This also meant that the Key Card door didn’t need to know how to check the player’s inventory instead it got the Inventory Component from the character and calls “Contains Item?” with the key card ItemInfo. Inside of the “Contains Item?” function on the inventory it would iterate over all the items and check if the requested item’s ItemId matched any item, if so then return “True”, or “False” otherwise.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/30-days-of-game-dev/assets/image/day4/BPC_Inventory_ContainsItem.jpg&quot; alt=&quot;Blueprint: BPC_Inventory: Contains Item?&quot; /&gt;
+&lt;em&gt;The “Contains Item?” function checks by ItemId, a Name type variable on ItemInfo&lt;/em&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;the-final-door&quot;&gt;The Final Door&lt;/h3&gt;
+
+&lt;p&gt;Once the inventory component was up and working, then creating the Key Card door was as easy as expected. Simply create a new BP_KeyCard_Door extending BP_Door and override “Should Open?” to check if a specific item was in the players inventory or not. The Key item is a public Variable on BP_KeyCard_Door pointing to an instance of BP_BaseItem. The only really special thing is that the Key item is an Actor of type BP_BaseItem, but the Inventory Component holds ItemInfo structs, not Actors. This means that on BeginPlay the door pulls out the ItemInfo struct from the Key item for later checking if the player has it in their inventory.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/30-days-of-game-dev/assets/image/day4/BP_KeyCard_Door_BeginPlay.png&quot; alt=&quot;BP_KeyCardDoor_Door Blueprint - Event graph&quot; /&gt;
+&lt;em&gt;Begin Play extracts the ItemInfo from the key actor and stores it for latter use.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/30-days-of-game-dev/assets/image/day4/BP_KeyCard_Door_ShouldOpen.jpg&quot; alt=&quot;BP_Door Blueprint - Event graph&quot; /&gt;
+&lt;em&gt;The overridden version of ‘Should Open?’ that shows the check for the key item info in the players inventory.&lt;/em&gt;&lt;/p&gt;</content><author><name></name></author><summary type="html">After following the guide from Day 3.5 I thought this should be a piece of cake.</summary></entry><entry><title type="html">Day 3.5: Intractable Inventory System Rabbit Hole</title><link href="/30-days-of-game-dev/2019/11/07/day3.5.html" rel="alternate" type="text/html" title="Day 3.5: Intractable Inventory System Rabbit Hole" /><published>2019-11-07T00:00:00-08:00</published><updated>2019-11-07T00:00:00-08:00</updated><id>/30-days-of-game-dev/2019/11/07/day3.5</id><content type="html" xml:base="/30-days-of-game-dev/2019/11/07/day3.5.html">&lt;p&gt;After hacking in the collectible in Day 3 I felt like I should build a proper inventory system. So I went to YouTube and started watching a ton of tutorials. I particularly found the one by &lt;a href=&quot;https://www.youtube.com/channel/UCdoWGpMQK_L29bWXoDeIItw&quot;&gt;Titanic Games&lt;/a&gt; on making an &lt;a href=&quot;https://www.youtube.com/watch?v=Ko8rfLJKcAE&quot;&gt;Inventory System&lt;/a&gt; really helpful.&lt;/p&gt;
+
+&lt;p&gt;I found it annoying that no one just posted the outlining material so I’m including my version &lt;a href=&quot;/30-days-of-game-dev/assets/ueassets/IteractableHighlight_M.uasset&quot;&gt;here&lt;/a&gt;. It will also be in the GitHub repo.&lt;/p&gt;
+
+&lt;p&gt;After re-watching some videos a couple of times I managed to get an interaction system working with highlighting when you are pointing near the object.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/30-days-of-game-dev/assets/image/day3.5/interactable-debug.jpg&quot; alt=&quot;Interactable with its interaction area visible&quot; /&gt;
+&lt;em&gt;Interactable work by using a Sphere Collision to toggle them as potentially interactable.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/30-days-of-game-dev/assets/image/day3.5/interactable-highlight.jpg&quot; alt=&quot;Items highlight when looking near them&quot; /&gt;
+&lt;em&gt;Items highlight when looking near them&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/30-days-of-game-dev/assets/image/day3.5/interactable-highlight-door.jpg&quot; alt=&quot;Doors also use the Interactables system&quot; /&gt;
+&lt;em&gt;Doors also use the Interactables system&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Gotchas:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Don’t forget to set your inventory size to something other than zero. I did this…twice…and it will baffle you as to why the item disappears. Another thing, don’t delete the actor from the world if it can’t fit in your inventory!&lt;/li&gt;
+&lt;/ul&gt;</content><author><name></name></author><summary type="html">After hacking in the collectible in Day 3 I felt like I should build a proper inventory system. So I went to YouTube and started watching a ton of tutorials. I particularly found the one by Titanic Games on making an Inventory System really helpful.</summary></entry><entry><title type="html">Day 3: Make and Item Pick-up/Collectible</title><link href="/30-days-of-game-dev/2019/11/02/day3.html" rel="alternate" type="text/html" title="Day 3: Make and Item Pick-up/Collectible" /><published>2019-11-02T00:00:00-07:00</published><updated>2019-11-02T00:00:00-07:00</updated><id>/30-days-of-game-dev/2019/11/02/day3</id><content type="html" xml:base="/30-days-of-game-dev/2019/11/02/day3.html">&lt;p&gt;First thing, I’ve restarted my project. I have an idea for a top down game and I though doing the 30 Day challenge would be a good way to jump start it, but instead I kept getting distracted by the things I wanted to do with my idea, not really following the challenge, so instead I’m working on a redo using a first person project with a stealth component, which I got inspired to do after watching 
+Matthew Palaje’s “&lt;a href=&quot;https://youtu.be/H7PfkXX65Ng&quot;&gt;Game A Month Indie Devlog #4 - Stealth Game Prototype&lt;/a&gt;”. So I think I’m going to try making an FPS stealthy kind of game.&lt;/p&gt;
+
+&lt;p&gt;Doing the pickup wasn’t to bad. I picked a sword from Infinity blade that looked kind of sci-fi to use as a weapon. Created a new blueprint and slapped a Collision Sphere on it, and then when you interact with the object it mounts it to the characters socket. For this I first removed the existing gun so that you start out with nothing in your hands. It looks a little silly since your hand is just floating:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/30-days-of-game-dev/assets/image/day3/invisible-gun.jpg&quot; alt=&quot;funky hand&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Then you pickup the weapon and can see it. Kind of cool, but the animations are all for having a gun, so it looks dorky:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/30-days-of-game-dev/assets/image/day3/sword.jpg&quot; alt=&quot;funky sword&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Other than that though, it is a pick-up item!&lt;/p&gt;</content><author><name></name></author><summary type="html">First thing, I’ve restarted my project. I have an idea for a top down game and I though doing the 30 Day challenge would be a good way to jump start it, but instead I kept getting distracted by the things I wanted to do with my idea, not really following the challenge, so instead I’m working on a redo using a first person project with a stealth component, which I got inspired to do after watching Matthew Palaje’s “Game A Month Indie Devlog #4 - Stealth Game Prototype”. So I think I’m going to try making an FPS stealthy kind of game.</summary></entry><entry><title type="html">Day 2: Interact with a door to open it</title><link href="/30-days-of-game-dev/2019/10/25/day2.html" rel="alternate" type="text/html" title="Day 2: Interact with a door to open it" /><published>2019-10-25T17:00:00-07:00</published><updated>2019-10-25T17:00:00-07:00</updated><id>/30-days-of-game-dev/2019/10/25/day2</id><content type="html" xml:base="/30-days-of-game-dev/2019/10/25/day2.html">&lt;p&gt;This seemed like it should be simple. Click on the door, it rotates. Simple, right. But, wrong. After futzing about myself and coming up with the below:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/30-days-of-game-dev/assets/image/day2/DoorBlueprintStart.png&quot; alt=&quot;My start to a door blueprint&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;I gave up and I looked up a tutorial on google and found this:&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=dvRmx8fCgSM&quot;&gt;UNREAL ENGINE 4 - Door Rotation Blueprint - with E Key PRESSED
+&lt;/a&gt; by vrayguide&lt;/p&gt;
+
+&lt;p&gt;Made perfect sense, seemed straight forward, implemented it. Then spent 3 hours trying to debug the stupid thing. I couldn’t walk through the door, open or closed. I thought it was an issue with the door frame not have the right collisions, but despite what I tried I couldn’t get things working. Also, pro tip, when Enabling and Disabling Input for a blueprint, definitely don’t forget to set which player controller you are enabling input for, otherwise your blueprint won’t relieve any events. It will be infuriating, trust me I know.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/30-days-of-game-dev/assets/image/day2/EnableDisableInputPlayerController.jpg&quot; alt=&quot;Setting player controller on Enable/Disable Input in blueprint&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;After giving up and going to bed I googled “ue 4 collision mesh” only to discover ue4 does collisions completely differently than unity (the only other engine I have any experience with, and its pretty minimal). So given that, its time to dive back in and try looking at the actual collision meshes that are part of the static mesh.&lt;/p&gt;
+
+&lt;p&gt;Turns out the issue wasn’t the collision mesh (though the door needed one), it was the navigation mesh. In the image below you can see how on the absurdly wide door does show a green path through, but the normal sized one doesn’t:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/30-days-of-game-dev/assets/image/day2/NavmeshIssues.jpg&quot; alt=&quot;Navmesh issue&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;To help that I decreased the tile size in the Navigation Mesh settings. That alone didn’t fix it all, I also had to turn on the real-time rebuilding of the nav mesh, also in the Project Settings.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/30-days-of-game-dev/assets/image/day2/WorkingNavMesh.jpg&quot; alt=&quot;Navmesh working&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;In the end it finally works.&lt;/p&gt;</content><author><name></name></author><summary type="html">This seemed like it should be simple. Click on the door, it rotates. Simple, right. But, wrong. After futzing about myself and coming up with the below:</summary></entry><entry><title type="html">Day 1: Play a sound effect with a trigger</title><link href="/30-days-of-game-dev/2019/10/23/day1.html" rel="alternate" type="text/html" title="Day 1: Play a sound effect with a trigger" /><published>2019-10-23T17:00:00-07:00</published><updated>2019-10-23T17:00:00-07:00</updated><id>/30-days-of-game-dev/2019/10/23/day1</id><content type="html" xml:base="/30-days-of-game-dev/2019/10/23/day1.html">&lt;p&gt;Installing Unreal Engine. Futzed around trying to find if I already had an Epic account, apparently not. Created one and then launched UE4… and waited … and waited .. and waited. This thing takes forever to start up on my laptop.&lt;/p&gt;
+
+&lt;p&gt;Selected a top-down view…it matches the game idea I have later on, so, might as well get used to it.&lt;/p&gt;
+
+&lt;p&gt;Found the &lt;code class=&quot;highlighter-rouge&quot;&gt;Volumes&lt;/code&gt;, added a “Trigger Volume” then attached a Blueprint. From there it was easy to drag a new node from the event, type ‘sound’ and pick “Play 2D sound at location”. Grab the actors location, pick a random sound, and done with Day 1.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/30-days-of-game-dev/assets/image/day1/trigger_volume.png&quot; alt=&quot;Trigger Volume Blueprint&quot; /&gt;&lt;/p&gt;</content><author><name></name></author><summary type="html">Installing Unreal Engine. Futzed around trying to find if I already had an Epic account, apparently not. Created one and then launched UE4… and waited … and waited .. and waited. This thing takes forever to start up on my laptop.</summary></entry></feed>
