@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="/30-days-of-game-dev/feed.xml" rel="self" type="application/atom+xml" /><link href="/30-days-of-game-dev/" rel="alternate" type="text/html" /><updated>2019-11-19T15:48:07-08:00</updated><id>/30-days-of-game-dev/feed.xml</id><title type="html">30 Days of Gamed Dev</title><subtitle>Welcome! Here I am recording my Journey through [KindredDev's](https://www.twitch.tv/kindreddev/)  &quot;[30 Days of Game Dev]({{site.baseurl}}/assets/image/30Days.png)&quot; challenge.  You can also follow along with my GitHub repo: [https://github.com/ntroutman/30-days-of-game-dev](https://github.com/ntroutman/30-days-of-game-dev)</subtitle><entry><title type="html">Day 4: Create a Key Item and Use it to Open a Door</title><link href="/30-days-of-game-dev/2019/11/09/day4.html" rel="alternate" type="text/html" title="Day 4: Create a Key Item and Use it to Open a Door" /><published>2019-11-09T16:00:00-08:00</published><updated>2019-11-09T16:00:00-08:00</updated><id>/30-days-of-game-dev/2019/11/09/day4</id><content type="html" xml:base="/30-days-of-game-dev/2019/11/09/day4.html">&lt;p&gt;After following the guide from Day 3.5 I thought this should be a piece of cake.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="/30-days-of-game-dev/feed.xml" rel="self" type="application/atom+xml" /><link href="/30-days-of-game-dev/" rel="alternate" type="text/html" /><updated>2019-11-24T22:21:41-08:00</updated><id>/30-days-of-game-dev/feed.xml</id><title type="html">30 Days of Gamed Dev</title><subtitle>Welcome! Here I am recording my Journey through [KindredDev's](https://www.twitch.tv/kindreddev/)  &quot;[30 Days of Game Dev]({{site.baseurl}}/assets/image/30Days.png)&quot; challenge.  You can also follow along with my GitHub repo: [https://github.com/ntroutman/30-days-of-game-dev](https://github.com/ntroutman/30-days-of-game-dev)</subtitle><entry><title type="html">Day 4: Create a Key Item and Use it to Open a Door</title><link href="/30-days-of-game-dev/2019/11/09/day4.html" rel="alternate" type="text/html" title="Day 4: Create a Key Item and Use it to Open a Door" /><published>2019-11-09T16:00:00-08:00</published><updated>2019-11-09T16:00:00-08:00</updated><id>/30-days-of-game-dev/2019/11/09/day4</id><content type="html" xml:base="/30-days-of-game-dev/2019/11/09/day4.html">&lt;p&gt;After following the guide from Day 3.5 I thought this should be a piece of cake.&lt;/p&gt;
 
 &lt;ol&gt;
   &lt;li&gt;Create a new child class of BP_BaseInteractable called “BP_Door”&lt;/li&gt;
@@ -14,13 +14,15 @@
 
 &lt;p&gt;Lets start with the door. I redid the door from Day 2 to make a sliding door instead of a rotating door. The door blueprint also contains a “Should Open?” method which returns true/false if the door determines it can be opened or not. It also has a “Should Close?” that behaves the same for closing.&lt;/p&gt;
 
-&lt;figure&gt;
-![BP_Door Blueprint - Event graph](/30-days-of-game-dev/assets/image/day4/BP_Door.jpg)
-*The event graph for BP_Door, shows calling 'Should Open?' to determine if the door will respond.*
+&lt;figure class=&quot;default-caption&quot;&gt;&lt;img src=&quot;/30-days-of-game-dev/assets/image/day4/BP_Door.jpg&quot; /&gt;
+  &lt;figcaption&gt;
+The event graph for BP_Door, shows calling 'Should Open?' to determine if the door will respond&lt;/figcaption&gt;
 &lt;/figure&gt;
 
-&lt;p&gt;&lt;img src=&quot;/30-days-of-game-dev/assets/image/day4/BP_Door_ShouldOpen.jpg&quot; alt=&quot;BP_Door Blueprint - Should Open?&quot; /&gt;
-&lt;em&gt;Default implementation of Should Open? for BP_Door, always ‘True’.&lt;/em&gt;&lt;/p&gt;
+&lt;figure class=&quot;default-caption&quot;&gt;&lt;img src=&quot;/30-days-of-game-dev/assets/image/day4/BP_Door_ShouldOpen.jpg&quot; alt=&quot;BP_Door Blueprint - Should Open&quot; /&gt;
+  &lt;figcaption&gt;
+Default implementation of Should Open? for BP_Door, always 'True'.&lt;/figcaption&gt;
+&lt;/figure&gt;
 
 &lt;h3 id=&quot;inventory-checking&quot;&gt;Inventory Checking&lt;/h3&gt;
 
@@ -30,29 +32,79 @@
 
 &lt;p&gt;Instead of burying the inventory as a variable inside of the character class and filling that class up with inventory specific methods, I decided to create a new Actor Component called “BPC_Inventory” which would hold the whole inventory subsystem for tracking what is in an inventory, checking the contents, stacking, checking if there is room, etc. This meant that when the “Pickup” event was called on the character it simply called “Add Item” on the attached inventory component.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/30-days-of-game-dev/assets/image/day4/BP_BaseItem_Interact.png&quot; alt=&quot;Blueprint: BP_BaseItem: Interact&quot; /&gt;
-&lt;em&gt;Interacting with a BaseItem calls ‘Pickup’ on the character.&lt;/em&gt;&lt;/p&gt;
+&lt;figure class=&quot;default-caption&quot;&gt;&lt;img src=&quot;/30-days-of-game-dev/assets/image/day4/BP_BaseItem_Interact.png&quot; alt=&quot;Blueprint: BP_BaseItem: Interact&quot; /&gt;
+  &lt;figcaption&gt;
+Interacting with a BaseItem calls 'Pickup' on the character.&lt;/figcaption&gt;
+&lt;/figure&gt;
 
-&lt;p&gt;&lt;img src=&quot;/30-days-of-game-dev/assets/image/day4/MyCharacter_Pickup.png&quot; alt=&quot;Blueprint: MyCharacter: Pickup&quot; /&gt;
-&lt;em&gt;“Add Item” is called on the Inventory when the player picks up an item. Note, the item is only destroyed if it was successfully picked up and added to the inventory.&lt;/em&gt;&lt;/p&gt;
+&lt;figure class=&quot;default-caption&quot;&gt;&lt;img src=&quot;/30-days-of-game-dev/assets/image/day4/MyCharacter_Pickup.png&quot; alt=&quot;Blueprint: MyCharacter: Pickup&quot; /&gt;
+  &lt;figcaption&gt;
+*&quot;Add Item&quot; is called on the Inventory when the player picks up an item. Note, the item is only destroyed if it was successfully picked up and added to the inventory.&lt;/figcaption&gt;
+&lt;/figure&gt;
 
-&lt;p&gt;&lt;img src=&quot;/30-days-of-game-dev/assets/image/day4/BPC_Inventory_AddItem.png&quot; alt=&quot;Blueprint: BPC_Inventory: Add Item&quot; /&gt;
-&lt;em&gt;The inventory attempts to add the requested item to the inventory if there is room, it returns a success/fail depending on if it was successfully added.&lt;/em&gt;&lt;/p&gt;
+&lt;figure class=&quot;default-caption&quot;&gt;&lt;img src=&quot;/30-days-of-game-dev/assets/image/day4/BPC_Inventory_AddItem.png&quot; alt=&quot;Blueprint: BPC_Inventory: Add Item&quot; /&gt;
+  &lt;figcaption&gt;
+*The inventory attempts to add the requested item to the inventory if there is room, it returns a success/fail depending on if it was successfully added.&lt;/figcaption&gt;
+&lt;/figure&gt;
 
 &lt;p&gt;This also meant that the Key Card door didn’t need to know how to check the player’s inventory instead it got the Inventory Component from the character and calls “Contains Item?” with the key card ItemInfo. Inside of the “Contains Item?” function on the inventory it would iterate over all the items and check if the requested item’s ItemId matched any item, if so then return “True”, or “False” otherwise.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/30-days-of-game-dev/assets/image/day4/BPC_Inventory_ContainsItem.jpg&quot; alt=&quot;Blueprint: BPC_Inventory: Contains Item?&quot; /&gt;
-&lt;em&gt;The “Contains Item?” function checks by ItemId, a Name type variable on ItemInfo&lt;/em&gt;&lt;/p&gt;
+&lt;figure class=&quot;default-caption&quot;&gt;&lt;img src=&quot;/30-days-of-game-dev/assets/image/day4/BPC_Inventory_ContainsItem.jpg&quot; alt=&quot;Blueprint: BPC_Inventory: Contains Item?&quot; /&gt;
+  &lt;figcaption&gt;
+*The &quot;Contains Item?&quot; function checks by ItemId, a Name type variable on ItemInfo&lt;/figcaption&gt;
+&lt;/figure&gt;
 
 &lt;h3 id=&quot;the-final-door&quot;&gt;The Final Door&lt;/h3&gt;
 
 &lt;p&gt;Once the inventory component was up and working, then creating the Key Card door was as easy as expected. Simply create a new BP_KeyCard_Door extending BP_Door and override “Should Open?” to check if a specific item was in the players inventory or not. The Key item is a public Variable on BP_KeyCard_Door pointing to an instance of BP_BaseItem. The only really special thing is that the Key item is an Actor of type BP_BaseItem, but the Inventory Component holds ItemInfo structs, not Actors. This means that on BeginPlay the door pulls out the ItemInfo struct from the Key item for later checking if the player has it in their inventory.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/30-days-of-game-dev/assets/image/day4/BP_KeyCard_Door_BeginPlay.png&quot; alt=&quot;BP_KeyCardDoor_Door Blueprint - Event graph&quot; /&gt;
-&lt;em&gt;Begin Play extracts the ItemInfo from the key actor and stores it for latter use.&lt;/em&gt;&lt;/p&gt;
+&lt;figure class=&quot;default-caption&quot;&gt;&lt;img src=&quot;/30-days-of-game-dev/assets/image/day4/BP_KeyCard_Door_BeginPlay.png&quot; alt=&quot;BP_KeyCardDoor_Door Blueprint - Event graph&quot; /&gt;
+  &lt;figcaption&gt;
+*Begin Play extracts the ItemInfo from the key actor and stores it for latter use.&lt;/figcaption&gt;
+&lt;/figure&gt;
 
-&lt;p&gt;&lt;img src=&quot;/30-days-of-game-dev/assets/image/day4/BP_KeyCard_Door_ShouldOpen.jpg&quot; alt=&quot;BP_Door Blueprint - Event graph&quot; /&gt;
-&lt;em&gt;The overridden version of ‘Should Open?’ that shows the check for the key item info in the players inventory.&lt;/em&gt;&lt;/p&gt;</content><author><name></name></author><summary type="html">After following the guide from Day 3.5 I thought this should be a piece of cake.</summary></entry><entry><title type="html">Day 3.5: Intractable Inventory System Rabbit Hole</title><link href="/30-days-of-game-dev/2019/11/07/day3.5.html" rel="alternate" type="text/html" title="Day 3.5: Intractable Inventory System Rabbit Hole" /><published>2019-11-07T00:00:00-08:00</published><updated>2019-11-07T00:00:00-08:00</updated><id>/30-days-of-game-dev/2019/11/07/day3.5</id><content type="html" xml:base="/30-days-of-game-dev/2019/11/07/day3.5.html">&lt;p&gt;After hacking in the collectible in Day 3 I felt like I should build a proper inventory system. So I went to YouTube and started watching a ton of tutorials. I particularly found the one by &lt;a href=&quot;https://www.youtube.com/channel/UCdoWGpMQK_L29bWXoDeIItw&quot;&gt;Titanic Games&lt;/a&gt; on making an &lt;a href=&quot;https://www.youtube.com/watch?v=Ko8rfLJKcAE&quot;&gt;Inventory System&lt;/a&gt; really helpful.&lt;/p&gt;
+&lt;figure class=&quot;default-caption&quot;&gt;&lt;img src=&quot;/30-days-of-game-dev/assets/image/day4/BP_KeyCard_Door_ShouldOpen.jpg&quot; alt=&quot;BP_Door Blueprint - Event graph&quot; /&gt;
+  &lt;figcaption&gt;
+*The overridden version of 'Should Open?' that shows the check for the key item info in the players inventory.&lt;/figcaption&gt;
+&lt;/figure&gt;</content><author><name></name></author><summary type="html">After following the guide from Day 3.5 I thought this should be a piece of cake.</summary></entry><entry><title type="html">[Errata] Redoing Devlog Theme</title><link href="/30-days-of-game-dev/2019/11/09/redoing-blog-theme.html" rel="alternate" type="text/html" title="[Errata] Redoing Devlog Theme" /><published>2019-11-09T16:00:00-08:00</published><updated>2019-11-09T16:00:00-08:00</updated><id>/30-days-of-game-dev/2019/11/09/redoing-blog-theme</id><content type="html" xml:base="/30-days-of-game-dev/2019/11/09/redoing-blog-theme.html">&lt;p&gt;This is completely unrelated to the game dev challenge.&lt;/p&gt;
+
+&lt;p&gt;I keep this site store on github, previously it was in a seperate branch ‘gh-pages’ and I let github use Jekyll to render it. However, I didn’t like some of how that worked, sepcially around adding images to posts. It was clunky to use and I wanted it to be more streamlined. So, I opted to moving away from github pages automatically rendering my site for me, but instead am pre-rendering it and pushing just the rendered contents into the “gh-pages” branch. This means the sources are stored on yet another branch, “dev-log”.&lt;/p&gt;
+
+&lt;p&gt;For the curious, this requires a custom deploy script I found floating around on the iterwebs created by &lt;a href=&quot;https://github.com/X1011/git-directory-deploy&quot;&gt;X1011&lt;/a&gt; (my copy is &lt;a href=&quot;https://github.com/ntroutman/30-days-of-game-dev/blob/dev-log/deploy&quot;&gt;here&lt;/a&gt; on github) which automatically builds the jekyll site locally and pushes just the built site to github.&lt;/p&gt;
+
+&lt;p&gt;The big thing I hated was adding images, so I took the &lt;a href=&quot;https://github.com/paulrobertlloyd/jekyll-figure&quot;&gt;jekyll-figure&lt;/a&gt; plugin and &lt;a href=&quot;https://github.com/ntroutman/30-days-of-game-dev/blob/dev-log/_plugins/figure.rb&quot;&gt;re-worked&lt;/a&gt; it to suit my needs (the benefits of being a professional software engineer). Now when I want to add an image to a post it looks like this:&lt;/p&gt;
+
+&lt;div class=&quot;language-liquid highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+&lt;span class=&quot;p&quot;&gt;{%&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;figure&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;na&quot;&gt;alt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;BP_Door Blueprint - Should Open&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;na&quot;&gt;img&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;BP_Door_ShouldOpen.jpg&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;%}&lt;/span&gt;
+Default implementation of Should Open? for BP_Door, always 'True'.
+&lt;span class=&quot;p&quot;&gt;{%&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;endfigure&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;%}&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And I keep my images under an assets folder like this:&lt;/p&gt;
+&lt;pre&gt;
+assets
+├── image
+│   ├── 30Days.png
+│   ├── day1
+...
+│   └── day4
+│       ├── BPC_Inventory_AddItem.png
+│       ├── BPC_Inventory_ContainsItem.jpg
+│       ├── BP_BaseItem_Interact.png
+│       ├── BP_Door.jpg
+│       ├── BP_Door_ShouldOpen.jpg
+│       ├── BP_KeyCard_Door_BeginPlay.png
+│       ├── BP_KeyCard_Door_ShouldOpen.jpg
+│       └── MyCharacter_Pickup.png
+&lt;/pre&gt;
+
+&lt;p&gt;And it renders a figure like so:&lt;/p&gt;
+
+&lt;figure class=&quot;default-caption&quot;&gt;&lt;img src=&quot;/30-days-of-game-dev//assets/image/day4/BP_Door_ShouldOpen.jpg&quot; alt=&quot;BP_Door Blueprint - Should Open&quot; /&gt;
+  &lt;figcaption&gt;
+Default implementation of Should Open? for BP_Door, always 'True'.&lt;/figcaption&gt;
+&lt;/figure&gt;</content><author><name></name></author><summary type="html">This is completely unrelated to the game dev challenge.</summary></entry><entry><title type="html">Day 3.5: Intractable Inventory System Rabbit Hole</title><link href="/30-days-of-game-dev/2019/11/07/day3.5.html" rel="alternate" type="text/html" title="Day 3.5: Intractable Inventory System Rabbit Hole" /><published>2019-11-07T00:00:00-08:00</published><updated>2019-11-07T00:00:00-08:00</updated><id>/30-days-of-game-dev/2019/11/07/day3.5</id><content type="html" xml:base="/30-days-of-game-dev/2019/11/07/day3.5.html">&lt;p&gt;After hacking in the collectible in Day 3 I felt like I should build a proper inventory system. So I went to YouTube and started watching a ton of tutorials. I particularly found the one by &lt;a href=&quot;https://www.youtube.com/channel/UCdoWGpMQK_L29bWXoDeIItw&quot;&gt;Titanic Games&lt;/a&gt; on making an &lt;a href=&quot;https://www.youtube.com/watch?v=Ko8rfLJKcAE&quot;&gt;Inventory System&lt;/a&gt; really helpful.&lt;/p&gt;
 
 &lt;p&gt;I found it annoying that no one just posted the outlining material so I’m including my version &lt;a href=&quot;/30-days-of-game-dev/assets/ueassets/IteractableHighlight_M.uasset&quot;&gt;here&lt;/a&gt;. It will also be in the GitHub repo.&lt;/p&gt;
 

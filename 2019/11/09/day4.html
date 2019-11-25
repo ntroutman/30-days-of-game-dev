@@ -13,7 +13,7 @@
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2019-11-09T16:00:00-08:00" />
 <script type="application/ld+json">
-{"description":"After following the guide from Day 3.5 I thought this should be a piece of cake.","@type":"BlogPosting","url":"/30-days-of-game-dev/2019/11/09/day4.html","headline":"Day 4: Create a Key Item and Use it to Open a Door","dateModified":"2019-11-09T16:00:00-08:00","datePublished":"2019-11-09T16:00:00-08:00","mainEntityOfPage":{"@type":"WebPage","@id":"/30-days-of-game-dev/2019/11/09/day4.html"},"@context":"https://schema.org"}</script>
+{"description":"After following the guide from Day 3.5 I thought this should be a piece of cake.","headline":"Day 4: Create a Key Item and Use it to Open a Door","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"/30-days-of-game-dev/2019/11/09/day4.html"},"url":"/30-days-of-game-dev/2019/11/09/day4.html","dateModified":"2019-11-09T16:00:00-08:00","datePublished":"2019-11-09T16:00:00-08:00","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/30-days-of-game-dev/assets/main.css"><link type="application/atom+xml" rel="alternate" href="/30-days-of-game-dev/feed.xml" title="30 Days of Gamed Dev" /></head>
 <body><header class="site-header" role="banner">
@@ -59,13 +59,15 @@
 
 <p>Lets start with the door. I redid the door from Day 2 to make a sliding door instead of a rotating door. The door blueprint also contains a “Should Open?” method which returns true/false if the door determines it can be opened or not. It also has a “Should Close?” that behaves the same for closing.</p>
 
-<figure>
-![BP_Door Blueprint - Event graph](/30-days-of-game-dev/assets/image/day4/BP_Door.jpg)
-*The event graph for BP_Door, shows calling 'Should Open?' to determine if the door will respond.*
+<figure class="default-caption"><img src="/30-days-of-game-dev/assets/image/day4/BP_Door.jpg" />
+  <figcaption>
+The event graph for BP_Door, shows calling 'Should Open?' to determine if the door will respond</figcaption>
 </figure>
 
-<p><img src="/30-days-of-game-dev/assets/image/day4/BP_Door_ShouldOpen.jpg" alt="BP_Door Blueprint - Should Open?" />
-<em>Default implementation of Should Open? for BP_Door, always ‘True’.</em></p>
+<figure class="default-caption"><img src="/30-days-of-game-dev/assets/image/day4/BP_Door_ShouldOpen.jpg" alt="BP_Door Blueprint - Should Open" />
+  <figcaption>
+Default implementation of Should Open? for BP_Door, always 'True'.</figcaption>
+</figure>
 
 <h3 id="inventory-checking">Inventory Checking</h3>
 
@@ -75,29 +77,41 @@
 
 <p>Instead of burying the inventory as a variable inside of the character class and filling that class up with inventory specific methods, I decided to create a new Actor Component called “BPC_Inventory” which would hold the whole inventory subsystem for tracking what is in an inventory, checking the contents, stacking, checking if there is room, etc. This meant that when the “Pickup” event was called on the character it simply called “Add Item” on the attached inventory component.</p>
 
-<p><img src="/30-days-of-game-dev/assets/image/day4/BP_BaseItem_Interact.png" alt="Blueprint: BP_BaseItem: Interact" />
-<em>Interacting with a BaseItem calls ‘Pickup’ on the character.</em></p>
+<figure class="default-caption"><img src="/30-days-of-game-dev/assets/image/day4/BP_BaseItem_Interact.png" alt="Blueprint: BP_BaseItem: Interact" />
+  <figcaption>
+Interacting with a BaseItem calls 'Pickup' on the character.</figcaption>
+</figure>
 
-<p><img src="/30-days-of-game-dev/assets/image/day4/MyCharacter_Pickup.png" alt="Blueprint: MyCharacter: Pickup" />
-<em>“Add Item” is called on the Inventory when the player picks up an item. Note, the item is only destroyed if it was successfully picked up and added to the inventory.</em></p>
+<figure class="default-caption"><img src="/30-days-of-game-dev/assets/image/day4/MyCharacter_Pickup.png" alt="Blueprint: MyCharacter: Pickup" />
+  <figcaption>
+*"Add Item" is called on the Inventory when the player picks up an item. Note, the item is only destroyed if it was successfully picked up and added to the inventory.</figcaption>
+</figure>
 
-<p><img src="/30-days-of-game-dev/assets/image/day4/BPC_Inventory_AddItem.png" alt="Blueprint: BPC_Inventory: Add Item" />
-<em>The inventory attempts to add the requested item to the inventory if there is room, it returns a success/fail depending on if it was successfully added.</em></p>
+<figure class="default-caption"><img src="/30-days-of-game-dev/assets/image/day4/BPC_Inventory_AddItem.png" alt="Blueprint: BPC_Inventory: Add Item" />
+  <figcaption>
+*The inventory attempts to add the requested item to the inventory if there is room, it returns a success/fail depending on if it was successfully added.</figcaption>
+</figure>
 
 <p>This also meant that the Key Card door didn’t need to know how to check the player’s inventory instead it got the Inventory Component from the character and calls “Contains Item?” with the key card ItemInfo. Inside of the “Contains Item?” function on the inventory it would iterate over all the items and check if the requested item’s ItemId matched any item, if so then return “True”, or “False” otherwise.</p>
 
-<p><img src="/30-days-of-game-dev/assets/image/day4/BPC_Inventory_ContainsItem.jpg" alt="Blueprint: BPC_Inventory: Contains Item?" />
-<em>The “Contains Item?” function checks by ItemId, a Name type variable on ItemInfo</em></p>
+<figure class="default-caption"><img src="/30-days-of-game-dev/assets/image/day4/BPC_Inventory_ContainsItem.jpg" alt="Blueprint: BPC_Inventory: Contains Item?" />
+  <figcaption>
+*The "Contains Item?" function checks by ItemId, a Name type variable on ItemInfo</figcaption>
+</figure>
 
 <h3 id="the-final-door">The Final Door</h3>
 
 <p>Once the inventory component was up and working, then creating the Key Card door was as easy as expected. Simply create a new BP_KeyCard_Door extending BP_Door and override “Should Open?” to check if a specific item was in the players inventory or not. The Key item is a public Variable on BP_KeyCard_Door pointing to an instance of BP_BaseItem. The only really special thing is that the Key item is an Actor of type BP_BaseItem, but the Inventory Component holds ItemInfo structs, not Actors. This means that on BeginPlay the door pulls out the ItemInfo struct from the Key item for later checking if the player has it in their inventory.</p>
 
-<p><img src="/30-days-of-game-dev/assets/image/day4/BP_KeyCard_Door_BeginPlay.png" alt="BP_KeyCardDoor_Door Blueprint - Event graph" />
-<em>Begin Play extracts the ItemInfo from the key actor and stores it for latter use.</em></p>
+<figure class="default-caption"><img src="/30-days-of-game-dev/assets/image/day4/BP_KeyCard_Door_BeginPlay.png" alt="BP_KeyCardDoor_Door Blueprint - Event graph" />
+  <figcaption>
+*Begin Play extracts the ItemInfo from the key actor and stores it for latter use.</figcaption>
+</figure>
 
-<p><img src="/30-days-of-game-dev/assets/image/day4/BP_KeyCard_Door_ShouldOpen.jpg" alt="BP_Door Blueprint - Event graph" />
-<em>The overridden version of ‘Should Open?’ that shows the check for the key item info in the players inventory.</em></p>
+<figure class="default-caption"><img src="/30-days-of-game-dev/assets/image/day4/BP_KeyCard_Door_ShouldOpen.jpg" alt="BP_Door Blueprint - Event graph" />
+  <figcaption>
+*The overridden version of 'Should Open?' that shows the check for the key item info in the players inventory.</figcaption>
+</figure>
 
   </div><a class="u-url" href="/30-days-of-game-dev/2019/11/09/day4.html" hidden></a>
 </article>
@@ -119,9 +133,8 @@
       <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/ntroutman"><svg class="svg-icon"><use xlink:href="/30-days-of-game-dev/assets/minima-social-icons.svg#github"></use></svg> <span class="username">ntroutman</span></a></li></ul>
 </div>
 
-      <div class="footer-col footer-col-3">
-        <p>Welcome! Here I am recording my Journey through [KindredDev&#39;s](https://www.twitch.tv/kindreddev/)  &quot;[30 Days of Game Dev]({{site.baseurl}}/assets/image/30Days.png)&quot; challenge.  You can also follow along with my GitHub repo: [https://github.com/ntroutman/30-days-of-game-dev](https://github.com/ntroutman/30-days-of-game-dev)</p>
-      </div>
+      <div class="footer-col footer-col-3"><p>Welcome! Here I am recording my Journey through <a href="https://www.twitch.tv/kindreddev/">KindredDev’s</a>  “<a href="{{site.baseurl}}/assets/image/30Days.png">30 Days of Game Dev</a>” challenge.  You can also follow along with my GitHub repo: <a href="https://github.com/ntroutman/30-days-of-game-dev">https://github.com/ntroutman/30-days-of-game-dev</a></p>
+</div>
     </div>
 
   </div>
