@@ -1,3 +1,7 @@
+#
+# Based on [jekyll-figure](https://github.com/paulrobertlloyd/jekyll-figure)
+#
+
 module Jekyll
   module Figure
 
