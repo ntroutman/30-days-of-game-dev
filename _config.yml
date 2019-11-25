@@ -26,6 +26,7 @@ github_username:  ntroutman
 markdown: kramdown
 theme: minima
 #plugins:
+#  - jekyll-figure
 
 defaults:
   - scope:
