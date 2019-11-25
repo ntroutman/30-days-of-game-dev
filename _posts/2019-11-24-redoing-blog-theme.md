@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "[Errata] Redoing Devlog Theme"
-date:   2019-11-10 00:00:00 -0000
+date:   2019-11-24
 ---
 
 This is completely unrelated to the game dev challenge.
